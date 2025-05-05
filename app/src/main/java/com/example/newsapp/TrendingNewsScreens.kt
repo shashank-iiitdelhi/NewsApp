@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.size.Scale
 import coil.compose.AsyncImage
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 
 @Composable
 fun TrendingNewsScreen(viewModel: NewsViewModel, onArticleClick: (Article) -> Unit) {
@@ -61,13 +63,26 @@ fun TrendingTopicItem(
     onArticleClick: () -> Unit
 ) {
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = if (isExpanded) {
+                Color(0xFF8B0000) // Lighter red when expanded
+            } else {
+                Color(0xFFFFCDD2) // Original red when not expanded
+            }
+        ),
         modifier = Modifier
             .padding(vertical = 8.dp)
             .fillMaxWidth()
             .clickable { onTopicClick() }
-    ) {
+    ){
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = topic, style = MaterialTheme.typography.headlineSmall)
+            Text(text = topic, style = MaterialTheme.typography.headlineSmall,
+                color = if(isExpanded){
+                    Color.White
+                }else{
+                    Color.Black
+                }
+            )
 
             if (isExpanded && article != null) {
                 article.urlToImage?.let { imageUrl ->
@@ -85,9 +100,11 @@ fun TrendingTopicItem(
                 Text(
                     text = article.title ?: "No title",
                     style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White,
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .clickable { onArticleClick() }
+
                 )
             }
         }

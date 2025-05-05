@@ -24,6 +24,7 @@ import java.nio.file.WatchEvent
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
@@ -39,31 +40,47 @@ fun SavedArticlesScreen(
             savedArticles = articleDao.getAllSavedArticles()
         }
     }
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        // Show the appropriate message when there are no saved articles
+        if (savedArticles.isEmpty()) {
+            Text("You have not saved any articles", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+            // Display saved articles
+            Text("Your saved articles", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
 
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)){
-        items(savedArticles, key = { it.id }) { article ->
-            val backgroundColor = if (article.isRead) {
-                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f) // Light red
-            } else {
-                MaterialTheme.colorScheme.error // Darker red
-            }
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .clickable {
-                        coroutineScope.launch {
-                            articleDao.markArticleAsRead(article.id)
-                            savedArticles = articleDao.getAllSavedArticles() // Refresh
+            LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                items(savedArticles, key = { it.id }) { article ->
+                    val backgroundColor = if (article.isRead) {
+                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f) // Light red
+                    } else {
+                        MaterialTheme.colorScheme.error // Darker red
+                    }
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .clickable {
+                                coroutineScope.launch {
+                                    articleDao.markArticleAsRead(article.id)
+                                    savedArticles = articleDao.getAllSavedArticles() // Refresh
+                                }
+                                onArticleSelected(article)
+                            },
+                        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                article.title ?: "No Title",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                article.content ?: "No content",
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
-                        onArticleSelected(article)
-                    },
-                colors = CardDefaults.cardColors(containerColor = backgroundColor)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(article.title ?: "No Title", style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(article.content ?: "No content", maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    }
                 }
             }
         }

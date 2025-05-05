@@ -57,8 +57,10 @@ dependencies {
     implementation(libs.androidx.webkit)
     implementation(libs.coil.compose.v210)
     implementation( libs.androidx.room.runtime)
+    implementation(libs.androidx.core.splashscreen)
     ksp("androidx.room:room-compiler:2.5.0")
-
+    implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("androidx.core:core-ktx:1.12.0")
     // Kotlin Extensions and Coroutines support
     implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)

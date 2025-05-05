@@ -2,6 +2,7 @@ package com.example.newsapp
 
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -32,7 +33,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 
+val warmFilter = ColorMatrix().apply {
+    setToScale(
+        redScale = 1.1f,
+        greenScale = 1.0f,
+        blueScale = 0.8f,
+        alphaScale = 1.0f
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +52,6 @@ fun ArticleDetailScreen(
     onBack: () -> Unit,
     onSaveArticle: (Article) -> Unit,
     onEnableReaderMode: () -> Unit,
-    onReadAloud: (String) -> Unit,
     isReaderMode: Boolean
 ) {
     var isTtsInitialized by remember { mutableStateOf(false) }
@@ -64,20 +74,23 @@ fun ArticleDetailScreen(
         }
     }
 
-    val backgroundColor = if (isReaderMode) Color(0xFFF4ECD8) else MaterialTheme.colorScheme.background
-    val textColor = if (isReaderMode) Color(0xFF2C2C2C) else MaterialTheme.colorScheme.onBackground
+    val isDarkTheme = isSystemInDarkTheme()
+
+    val backgroundColor = when {
+        isReaderMode -> if (isDarkTheme) Color(0xFF1E1E1E) else Color(0xFFF4ECD8)
+        else -> MaterialTheme.colorScheme.background
+    }
+
+    val textColor = when {
+        isReaderMode -> if (isDarkTheme) Color(0xFFA1474F) else Color(0xFF2C2C2C)
+        else -> MaterialTheme.colorScheme.onBackground
+    }
 
     Scaffold(
         containerColor = backgroundColor,
         topBar = {
             TopAppBar(
                 title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Real News")
-                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -102,7 +115,8 @@ fun ArticleDetailScreen(
                         onClick = { onSaveArticle(article) },
                         modifier = Modifier
                             .align(Alignment.BottomStart)
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        containerColor = Color(0xFFA1474F)
                     ) {
                         Icon(Icons.Default.AddCircle, contentDescription = "Save Article")
                     }
@@ -111,7 +125,8 @@ fun ArticleDetailScreen(
                         onClick = onEnableReaderMode,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        containerColor = Color(0xFFA1474F)
                     ) {
                         Icon(Icons.Default.Person, contentDescription = "Reader Mode")
                     }
@@ -137,7 +152,8 @@ fun ArticleDetailScreen(
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    containerColor = Color(0xFFA1474F)
                 ) {
                     Icon(
                         imageVector = if (isSpeaking) Icons.Default.ArrowBack else Icons.Default.Call,
@@ -162,7 +178,9 @@ fun ArticleDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp)
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 16.dp),
+                    colorFilter = if (isReaderMode) ColorFilter.colorMatrix(warmFilter) else null
+
                 )
             }
 

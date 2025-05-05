@@ -38,6 +38,7 @@ class NewsViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val articlesRetrieved = repository.getNews("8fbc76d60fab4c0bba42941d323fac09", selectedCountry)
+//                val articlesRetrieved = repository.getNews("8", selectedCountry)
                 Log.d("NewsViewModel", "Fetched ${articlesRetrieved.size} articles")
                 articles = articlesRetrieved
 
