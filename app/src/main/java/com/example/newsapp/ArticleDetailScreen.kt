@@ -1,6 +1,7 @@
 package com.example.newsapp
 
 import android.speech.tts.TextToSpeech
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 
@@ -37,12 +39,13 @@ fun ArticleDetailScreen(
     article: Article,
     onBack: () -> Unit,
     onSaveArticle: (Article) -> Unit, // To save article locally
+    onEnableReaderMode: () -> Unit,
     onReadAloud: (String) -> Unit, // Text to speech
-    onEnableReaderMode: () -> Unit // Enable reader mode
-) {
+    isReaderMode: Boolean
+    ) {
     var isTtsInitialized by remember { mutableStateOf(false) }
     var tts: TextToSpeech? by remember { mutableStateOf(null) }
-
+    var isReaderMode by remember { mutableStateOf(false) }
     // Initialize TextToSpeech
     val context = LocalContext.current
 
@@ -51,8 +54,10 @@ fun ArticleDetailScreen(
             isTtsInitialized = status == TextToSpeech.SUCCESS
         })
     }
-
+    val backgroundColor = if (isReaderMode) Color(0xFFF4ECD8) else MaterialTheme.colorScheme.background // Light sepia background for reader mode
+    val textColor = if (isReaderMode) Color(0xFF2C2C2C) else MaterialTheme.colorScheme.onBackground // Dark gray text for reader mode
     Scaffold(
+        containerColor = backgroundColor,
         topBar = {
             TopAppBar(
                 title = {
@@ -108,7 +113,7 @@ fun ArticleDetailScreen(
 
                 // Reader Mode Button
                 FloatingActionButton(
-                    onClick = { onEnableReaderMode() },
+                    onClick = { isReaderMode = !isReaderMode },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
@@ -123,7 +128,8 @@ fun ArticleDetailScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // Enable scrolling
+                .verticalScroll(rememberScrollState())
+                .background(color = backgroundColor)// Enable scrolling
         ) {
             // Image section
             article.urlToImage?.let { imageUrl ->
@@ -148,7 +154,9 @@ fun ArticleDetailScreen(
             Text(
                 text = article.content ?: "No content available.",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 16.dp),
+                maxLines = 100,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

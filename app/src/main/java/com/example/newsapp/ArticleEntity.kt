@@ -10,6 +10,6 @@ data class ArticleEntity(
     val content: String?,
     val description:String?,
     val url: String?,
-    val urlToImage: String?
-
+    val urlToImage: String?,
+    val isRead: Boolean = false
 )

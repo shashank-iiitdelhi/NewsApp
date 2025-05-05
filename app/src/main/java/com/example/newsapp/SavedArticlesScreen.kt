@@ -42,23 +42,23 @@ fun SavedArticlesScreen(
 
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)){
         items(savedArticles, key = { it.id }) { article ->
-//            val backgroundColor = if (article.isRead) {
-//                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f) // Light red
-//            } else {
-//                MaterialTheme.colorScheme.error // Darker red
-//            }
+            val backgroundColor = if (article.isRead) {
+                MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f) // Light red
+            } else {
+                MaterialTheme.colorScheme.error // Darker red
+            }
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
                     .clickable {
                         coroutineScope.launch {
-//                            articleDao.markArticleAsRead(article.id)
+                            articleDao.markArticleAsRead(article.id)
                             savedArticles = articleDao.getAllSavedArticles() // Refresh
                         }
                         onArticleSelected(article)
                     },
-//                colors = CardDefaults.cardColors(containerColor = backgroundColor)
+                colors = CardDefaults.cardColors(containerColor = backgroundColor)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(article.title ?: "No Title", style = MaterialTheme.typography.titleMedium)

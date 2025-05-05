@@ -10,6 +10,6 @@ interface ArticleDao {
     @Query("SELECT * FROM saved_articles")
     suspend fun getAllSavedArticles(): List<ArticleEntity>
 
-//    @Query("UPDATE saved_articles SET isRead = 1 WHERE id = :articleId")
-//    suspend fun markArticleAsRead(articleId: Int)
+    @Query("UPDATE saved_articles SET isRead = 1 WHERE id = :articleId")
+    suspend fun markArticleAsRead(articleId: Int)
 }
