@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,24 +39,34 @@ import coil.compose.AsyncImage
 fun ArticleDetailScreen(
     article: Article,
     onBack: () -> Unit,
-    onSaveArticle: (Article) -> Unit, // To save article locally
+    onSaveArticle: (Article) -> Unit,
     onEnableReaderMode: () -> Unit,
-    onReadAloud: (String) -> Unit, // Text to speech
+    onReadAloud: (String) -> Unit,
     isReaderMode: Boolean
-    ) {
+) {
     var isTtsInitialized by remember { mutableStateOf(false) }
+    var isSpeaking by remember { mutableStateOf(false) }
     var tts: TextToSpeech? by remember { mutableStateOf(null) }
-    var isReaderMode by remember { mutableStateOf(false) }
-    // Initialize TextToSpeech
+
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = true) {
-        tts = TextToSpeech(context, TextToSpeech.OnInitListener { status ->
+    LaunchedEffect(Unit) {
+        tts = TextToSpeech(context) { status ->
             isTtsInitialized = status == TextToSpeech.SUCCESS
-        })
+        }
     }
-    val backgroundColor = if (isReaderMode) Color(0xFFF4ECD8) else MaterialTheme.colorScheme.background // Light sepia background for reader mode
-    val textColor = if (isReaderMode) Color(0xFF2C2C2C) else MaterialTheme.colorScheme.onBackground // Dark gray text for reader mode
+
+    // Stop TTS when composable is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            tts?.stop()
+            tts?.shutdown()
+        }
+    }
+
+    val backgroundColor = if (isReaderMode) Color(0xFFF4ECD8) else MaterialTheme.colorScheme.background
+    val textColor = if (isReaderMode) Color(0xFF2C2C2C) else MaterialTheme.colorScheme.onBackground
+
     Scaffold(
         containerColor = backgroundColor,
         topBar = {
@@ -69,21 +80,24 @@ fun ArticleDetailScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = {
+                        tts?.stop()
+                        isSpeaking = false
+                        onBack()
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         },
         floatingActionButton = {
-            // Floating Action Buttons positioned together
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                // Save Article Button
-                if (article.content != null) {
+                // Show Save and Reader Mode buttons only if not speaking
+                if (!isSpeaking && article.content != null) {
                     FloatingActionButton(
                         onClick = { onSaveArticle(article) },
                         modifier = Modifier
@@ -92,33 +106,43 @@ fun ArticleDetailScreen(
                     ) {
                         Icon(Icons.Default.AddCircle, contentDescription = "Save Article")
                     }
+
+                    FloatingActionButton(
+                        onClick = onEnableReaderMode,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp)
+                    ) {
+                        Icon(Icons.Default.Person, contentDescription = "Reader Mode")
+                    }
                 }
 
-                // Read Aloud Button
+                // Read Aloud Button (center)
                 FloatingActionButton(
                     onClick = {
                         if (isTtsInitialized) {
-                            tts?.speak(
-                                article.content ?: "No content available.",
-                                TextToSpeech.QUEUE_FLUSH, null, null
-                            )
+                            if (tts?.isSpeaking == true) {
+                                tts?.stop()
+                                isSpeaking = false
+                            } else {
+                                tts?.speak(
+                                    article.content ?: "No content available.",
+                                    TextToSpeech.QUEUE_FLUSH,
+                                    null,
+                                    null
+                                )
+                                isSpeaking = true
+                            }
                         }
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(16.dp)
                 ) {
-                    Icon(Icons.Default.Call, contentDescription = "Read Aloud")
-                }
-
-                // Reader Mode Button
-                FloatingActionButton(
-                    onClick = { isReaderMode = !isReaderMode },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp)
-                ) {
-                    Icon(Icons.Default.Person, contentDescription = "Reader Mode")
+                    Icon(
+                        imageVector = if (isSpeaking) Icons.Default.ArrowBack else Icons.Default.Call,
+                        contentDescription = if (isSpeaking) "Stop" else "Read Aloud"
+                    )
                 }
             }
         }
@@ -129,9 +153,8 @@ fun ArticleDetailScreen(
                 .padding(16.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .background(color = backgroundColor)// Enable scrolling
+                .background(backgroundColor)
         ) {
-            // Image section
             article.urlToImage?.let { imageUrl ->
                 AsyncImage(
                     model = imageUrl,
@@ -143,20 +166,18 @@ fun ArticleDetailScreen(
                 )
             }
 
-            // Article title
             Text(
                 text = article.title ?: "No Title Available",
                 style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                color = textColor
             )
 
-            // Article content
             Text(
                 text = article.content ?: "No content available.",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = 16.dp),
-                maxLines = 100,
-                overflow = TextOverflow.Ellipsis
+                color = textColor
             )
         }
     }
