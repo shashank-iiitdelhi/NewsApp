@@ -2,26 +2,18 @@ package com.example.newsapp
 
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material3.*
-import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.DisposableEffect
@@ -32,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import coil.compose.AsyncImage
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 
@@ -52,7 +43,8 @@ fun ArticleDetailScreen(
     onBack: () -> Unit,
     onSaveArticle: (Article) -> Unit,
     onEnableReaderMode: () -> Unit,
-    isReaderMode: Boolean
+    isReaderMode: Boolean,
+    isDarkMode: Boolean
 ) {
     var isTtsInitialized by remember { mutableStateOf(false) }
     var isSpeaking by remember { mutableStateOf(false) }
@@ -74,16 +66,17 @@ fun ArticleDetailScreen(
         }
     }
 
-    val isDarkTheme = isSystemInDarkTheme()
-
-    val backgroundColor = when {
-        isReaderMode -> if (isDarkTheme) Color(0xFF1E1E1E) else Color(0xFFF4ECD8)
-        else -> MaterialTheme.colorScheme.background
+    val backgroundColor = if (isDarkMode) {
+        MaterialTheme.colorScheme.background // Always dark background in dark mode
+    } else {
+        if (isReaderMode) Color(0xFFF4ECD8) else MaterialTheme.colorScheme.background
     }
 
-    val textColor = when {
-        isReaderMode -> if (isDarkTheme) Color(0xFFA1474F) else Color(0xFF2C2C2C)
-        else -> MaterialTheme.colorScheme.onBackground
+// Text color: change for reader mode
+    val textColor = if (isReaderMode) {
+        if (isDarkMode) Color(0xFFF4ECD8) else Color(0xFF2C2C2C)
+    } else {
+        MaterialTheme.colorScheme.onBackground
     }
 
     Scaffold(

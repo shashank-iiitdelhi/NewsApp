@@ -43,7 +43,7 @@ fun CountrySelector(
 
         ) {
             val textFieldModifier = Modifier
-                .menuAnchor()
+//                .menuAnchor()
                 .fillMaxWidth(0.9f)
                 .border(
                     1.dp,

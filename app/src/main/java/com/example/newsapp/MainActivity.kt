@@ -116,7 +116,8 @@ class MainActivity : ComponentActivity() {
                                         onEnableReaderMode = {
                                             isReaderMode = !isReaderMode // Toggle Reader Mode
                                         },
-                                        isReaderMode = isReaderMode  // Pass reader mode state
+                                        isReaderMode = isReaderMode,  // Pass reader mode state
+                                        isDarkMode = darkTheme
                                     )
                                 }
 

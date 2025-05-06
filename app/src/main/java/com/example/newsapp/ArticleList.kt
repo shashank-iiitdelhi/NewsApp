@@ -28,6 +28,11 @@ fun ArticleItem(article: Article, onClick: () -> Unit) {
     } else {
         Color(0xFFFFCDD2) // Light red for off-app
     }
+    val textColor = if (article.content != null) {
+        Color(0xFFFFFFFF) // Dark red for on-app
+    } else {
+        Color(0xFF000000) // Light red for off-app
+    }
 
     Card(
         modifier = Modifier
@@ -50,13 +55,13 @@ fun ArticleItem(article: Article, onClick: () -> Unit) {
             Text(
                 text = article.title ?: "No Title",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White
+                color = textColor
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = article.description ?: "No Description",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White
+                color = textColor
             )
         }
     }
