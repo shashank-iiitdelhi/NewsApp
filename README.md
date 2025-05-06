@@ -1,4 +1,4 @@
-# 🗞️ News App
+# Real News App
 
 An Android news reading app built with **Jetpack Compose**, using modern Android development tools. The app fetches and displays news articles and offers user-friendly features such as:
 
@@ -9,28 +9,28 @@ An Android news reading app built with **Jetpack Compose**, using modern Android
 
 ---
 
-## ✨ Features
+## Features
 
-### ✅ View News Articles
+###  View News Articles
 - Shows title, image, and content of selected news articles.
 
-### 📖 Reader Mode
+###  Reader Mode
 - Enables a distraction-free reading experience with a warm background and enhanced typography.
 
-### 🔊 Text-to-Speech
+###  Text-to-Speech
 - Listen to articles with a single tap using Android's `TextToSpeech` API.
 - Controls for start/stop listening.
 
-### 💾 Save Articles
+###  Save Articles
 - Save articles to local database using Room.
 - Visually indicates if an article is saved.
 
-### 🌍 WebView Integration
+###  WebView Integration
 - View the original article in a WebView without leaving the app.
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 - **Kotlin**
 - **Jetpack Compose**
@@ -42,7 +42,7 @@ An Android news reading app built with **Jetpack Compose**, using modern Android
 
 ---
 
-## 🏗 Architecture
+##  Architecture
 
 - **UI Layer:** Built using Jetpack Compose.
 - **Data Layer:** Local persistence via Room.
