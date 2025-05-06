@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import android.content.Context
+import android.util.Log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
             var isReaderMode by remember { mutableStateOf(false) }  // Track Reader Mode
             val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             var darkTheme by remember { mutableStateOf(sharedPreferences.getBoolean("dark_mode", false)) }
+
             NewsAppTheme(darkTheme = darkTheme) {
                 LaunchedEffect(selectedScreen) {
                     if (selectedScreen == "Trending") {
@@ -108,16 +110,29 @@ class MainActivity : ComponentActivity() {
                                                 description = article.description,
                                                 urlToImage = article.urlToImage
                                             )
+
                                             // Use coroutine scope for DB call
                                             CoroutineScope(Dispatchers.IO).launch {
-                                                articleDao.insertArticle(entity)
+                                                val titleToCheck = entity.title ?: ""
+                                                // Check if an article with the same title already exists
+                                                val existingArticleCount = articleDao.countByTitle(titleToCheck)
+
+                                                // If the count is 0, the article does not exist, so insert it into the database
+                                                if (existingArticleCount == 0) {
+                                                    articleDao.insertArticle(entity)
+                                                } else {
+                                                    // Optionally, log that the article already exists or perform other actions
+                                                    Log.d("ArticleSave", "Article with title '${entity.title}' already exists.")
+                                                }
                                             }
                                         },
+
                                         onEnableReaderMode = {
                                             isReaderMode = !isReaderMode // Toggle Reader Mode
                                         },
                                         isReaderMode = isReaderMode,  // Pass reader mode state
-                                        isDarkMode = darkTheme
+                                        isDarkMode = darkTheme,
+                                        articleDao = articleDao
                                     )
                                 }
 

@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.nio.file.WatchEvent
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -71,6 +75,22 @@ fun SavedArticlesScreen(
                         colors = CardDefaults.cardColors(containerColor = backgroundColor)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
+                            IconButton(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        articleDao.deleteArticleById(article.id)
+                                        savedArticles = articleDao.getAllSavedArticles() // Refresh
+                                    }
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete Article",
+                                    tint = if (article.isRead) Color.Black else Color.White
+                                )
+                            }
                             Text(
                                 article.title ?: "No Title",
                                 style = MaterialTheme.typography.titleMedium,

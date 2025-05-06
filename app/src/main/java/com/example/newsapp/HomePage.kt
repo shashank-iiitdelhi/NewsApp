@@ -43,7 +43,7 @@ fun CountrySelector(
 
         ) {
             val textFieldModifier = Modifier
-//                .menuAnchor()
+                .menuAnchor()
                 .fillMaxWidth(0.9f)
                 .border(
                     1.dp,
@@ -101,7 +101,7 @@ fun BottomNavigationBar(
             selected = selectedScreen == "Trending",
             onClick = { onTabSelected("Trending") },
             label = { Text("Trending") },
-            icon = { Icon(Icons.Rounded.KeyboardArrowUp, contentDescription = null) },
+            icon = { Icon(painter = painterResource(id = R.drawable.trending_up_24px), contentDescription = null) },
             colors = NavigationBarItemColors(
                 selectedIconColor = Color(0xFFFFFFFF), // Dark red for selected icon
                 unselectedIconColor = Color.Gray, // Gray for unselected icon

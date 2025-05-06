@@ -65,9 +65,9 @@ fun TrendingTopicItem(
     Card(
         colors = CardDefaults.cardColors(
             containerColor = if (isExpanded) {
-                Color(0xFF8B0000) // Lighter red when expanded
+                Color(0xFF8B0000)  // Original red when not expanded
             } else {
-                Color(0xFFFFCDD2) // Original red when not expanded
+                Color(0xFFFFCDD2) // Lighter red when expanded
             }
         ),
         modifier = Modifier
