@@ -60,4 +60,4 @@ _Add screenshots here if available_
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/news-app.git
+   git clone https://github.com/shashank-iiitdelhi/NewsApp.git
