@@ -52,8 +52,15 @@ An Android news reading app built with **Jetpack Compose**, using modern Android
 
 ## 📸 Screenshots
 
-_Add screenshots here if available_
+<p align="center">
+  <img src="screenshots/1.jpg" alt="Home page" width="280" />
+  <img src="screenshots/2.jpg" alt="Article details" width="280" />
+  <img src="screenshots/3.jpg" alt="Reader mode" width="280" />
+</p>
 
+<p align="center">
+  <img src="screenshots/4.jpg" alt="Settings / TTS" width="280" />
+</p>
 ---
 
 ## 📦 Installation
